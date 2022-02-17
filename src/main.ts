@@ -36,6 +36,7 @@ client.on('message', async (message: Message) => {
         });
         for (let num = 0; num < response.data.data.length; num++) {
             let solution = response.data.data[num].solution;
+            solution = encodeURI(solution);
             solution = decodeURI(solution)
             const excercise_number = response.data.data[num].number;
             const page_number = exerciseDetails.page
@@ -61,6 +62,7 @@ client.on('message', async (message: Message) => {
         let solution = exerciseDetails.exerciseID
         ? response.data.data.filter((sol: apiSolution) => sol.id.toString() === exerciseDetails.exerciseID)[0].solution
         : response.data.data[0].solution;
+        solution = encodeURI(solution);
         solution = decodeURI(solution)
 
         const excercise_number = exerciseDetails.exerciseID 
