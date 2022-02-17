@@ -26,7 +26,8 @@ export default function getExerciseImage(exerciseDetails: ExerciseDetails, autho
         const browser = await puppeteer.launch({timeout: 100000});
         const page = await browser.newPage();
         await page.setViewport({width: 780, height: 1});
-        let decoded_solution = decodeURI(solution)
+        let decoded_solution = encodeURI(solution)
+        decoded_solution = decodeURI(solution)
         decoded_solution = `<h1 style="font-size:30;"> ${excercise_number}/${page_number} </h1>` + decoded_solution
         decoded_solution = '<style>html * {font-family: MulishVariable,sans-serif;}</style>' + decoded_solution
         decoded_solution = decoded_solution.replaceAll(/<object class="math small".*?>/g, '')
