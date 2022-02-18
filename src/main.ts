@@ -26,7 +26,7 @@ client.on('message', async (message: Message) => {
     }
 
     if (message.content.includes('!str')) {
-        
+
         const response = await getResponse(exerciseDetails);
 
         for (let num = 0; num < response.data.data.length; num++) {
@@ -82,12 +82,8 @@ client.on('message', async (message: Message) => {
                 files: [solutionScreenshot],
             })
     }
+    message.delete()
 
-    try {
-        message.delete()
-    } catch (error) {
-        console.log('message delete failed')
-    }
 })
 
 async function getResponse(exerciseDetails: ExerciseDetails) {
