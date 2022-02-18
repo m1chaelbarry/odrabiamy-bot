@@ -24,6 +24,8 @@ client.on('message', async (message: Message) => {
         page: urlArgs[3].split('-')[1],
         exerciseID: urlArgs[4]?.split('-')[1],
     }
+    await message.channel.send('https://emoji.gg/assets/emoji/loading.gif')
+    const emoji = message.channel.lastMessage
 
     if (message.content.includes('!str')) {
 
@@ -32,10 +34,10 @@ client.on('message', async (message: Message) => {
         for (let num = 0; num < response.data.data.length; num++) {
             let solution = response.data.data[num].solution;
             solution = encodeURI(solution);
-            solution = decodeURI(solution)
+            solution = decodeURI(solution);
             const excercise_number = response.data.data[num].number;
             const page_number = exerciseDetails.page
-            const solutionScreenshot = await request(solution, excercise_number, page_number)
+            const solutionScreenshot = await renderer(solution, excercise_number, page_number)
             markAsVisited(response.data.data[num].id, config.odrabiamyAuth);
             if (!solutionScreenshot) break;
         
@@ -63,7 +65,7 @@ client.on('message', async (message: Message) => {
         const subsection = solution.split('<hr>')
 
         for (const element of subsection){
-            const solutionScreenshot = await request(element, excercise_number, page_number)
+            const solutionScreenshot = await renderer(element, excercise_number, page_number)
             markAsVisited(exerciseDetails.exerciseID ? exerciseDetails.exerciseID : response.data.data[0].id, config.odrabiamyAuth);
             if (!solutionScreenshot) return message.channel.send('Wystąpił błąd przy pobieraniu zadania');
     
@@ -74,6 +76,9 @@ client.on('message', async (message: Message) => {
 
         
     } else {
+        
+        
+
         const solutionScreenshot: Buffer | null = await odrabiamy(exerciseDetails, config.odrabiamyAuth);
         
             if (!solutionScreenshot) return message.channel.send('Wystąpił błąd przy pobieraniu zadania');
@@ -82,6 +87,8 @@ client.on('message', async (message: Message) => {
                 files: [solutionScreenshot],
             })
     }
+    if (emoji) {emoji.delete()}
+    
     message.delete()
 
 })
@@ -97,14 +104,12 @@ async function getResponse(exerciseDetails: ExerciseDetails) {
     });
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function request(solution: string, excercise_number: string, page_number: string,){
+async function renderer(solution: string, excercise_number: string, page_number: string,){
 
     const solutionScreenshot: Buffer | null = await fullpage(solution, excercise_number, page_number);
     return solutionScreenshot;
 }
 
-client.login(config.token)
 
 function markAsVisited(exerciseID: string, authorization: string) {
     axios.request({
@@ -117,3 +122,5 @@ function markAsVisited(exerciseID: string, authorization: string) {
     })
 }
 
+
+client.login(config.token)
