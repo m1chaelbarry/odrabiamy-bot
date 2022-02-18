@@ -15,7 +15,8 @@ export function ready(): void {
 client.on('ready', ready);
 client.on('message', async (message: Message) => {
     if (message.author.bot) return;
-    if (!config.channels.includes(message.channel.id)) return;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    if (!config.channels.includes(message.guild!.id)) return;
     if (!message.content.includes('odrabiamy.pl')) return;
 
     const urlArgs = message.content.split('odrabiamy.pl')[1].split('/');
@@ -26,7 +27,7 @@ client.on('message', async (message: Message) => {
     }
     await message.channel.send('https://emoji.gg/assets/emoji/loading.gif')
     const emoji = message.channel.lastMessage
-    message.delete() 
+    await message.delete() 
 
     if (message.content.includes('!str')) {
 
