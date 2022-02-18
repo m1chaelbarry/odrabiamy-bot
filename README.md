@@ -1,6 +1,8 @@
 # odrabiamy-bot
 odrabiamy-bot to Discordowy klient serwisu odrabiamy.pl
 
+na bazie [doteq/odrabiamy-bot](https://github.com/doteq/odrabiamy-bot)
+
 ## Użycie
 Skonfiguruj bota w pliku [`src/config.ts`](src/config.ts) i uruchom:
 ```bash
