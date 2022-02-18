@@ -26,6 +26,7 @@ client.on('message', async (message: Message) => {
     }
     await message.channel.send('https://emoji.gg/assets/emoji/loading.gif')
     const emoji = message.channel.lastMessage
+    message.delete() 
 
     if (message.content.includes('!str')) {
 
@@ -88,8 +89,9 @@ client.on('message', async (message: Message) => {
             })
     }
     if (emoji) {emoji.delete()}
+
+
     
-    message.delete()
 
 })
 
