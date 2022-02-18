@@ -26,14 +26,9 @@ client.on('message', async (message: Message) => {
     }
 
     if (message.content.includes('!str')) {
-        const response = await axios.request({
-            method: 'GET',
-            url: `https://odrabiamy.pl/api/v2/exercises/page/premium/${exerciseDetails.page}/${exerciseDetails.bookID}`,
-            headers: {
-                'user-agent': 'new_user_agent-huawei-142',
-                Authorization: `Bearer ${config.odrabiamyAuth}`
-            }
-        });
+        
+        const response = await getResponse(exerciseDetails);
+
         for (let num = 0; num < response.data.data.length; num++) {
             let solution = response.data.data[num].solution;
             solution = encodeURI(solution);
@@ -50,14 +45,8 @@ client.on('message', async (message: Message) => {
         }
 
     } else if (message.content.includes('!split')) {
-        const response = await axios.request({
-            method: 'GET',
-            url: `https://odrabiamy.pl/api/v2/exercises/page/premium/${exerciseDetails.page}/${exerciseDetails.bookID}`,
-            headers: {
-                'user-agent': 'new_user_agent-huawei-142',
-                Authorization: `Bearer ${config.odrabiamyAuth}`
-            }
-        });
+
+        const response = await getResponse(exerciseDetails);
 
         let solution = exerciseDetails.exerciseID
         ? response.data.data.filter((sol: apiSolution) => sol.id.toString() === exerciseDetails.exerciseID)[0].solution
@@ -100,6 +89,17 @@ client.on('message', async (message: Message) => {
         console.log('message delete failed')
     }
 })
+
+async function getResponse(exerciseDetails: ExerciseDetails) {
+    return await axios.request({
+        method: 'GET',
+        url: `https://odrabiamy.pl/api/v2/exercises/page/premium/${exerciseDetails.page}/${exerciseDetails.bookID}`,
+        headers: {
+            'user-agent': 'new_user_agent-huawei-142',
+            Authorization: `Bearer ${config.odrabiamyAuth}`
+        }
+    });
+}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function request(solution: string, excercise_number: string, page_number: string,){
