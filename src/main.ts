@@ -20,10 +20,10 @@ client.on('message', async (message: Message) => {
     if (message.content.includes('!jk')) {
         const kanisz = message.guild?.members.cache.get("497821345921630210");
         message.channel.send(`Jebać ${kanisz}`)
-        kanisz?.kick("jk")
         message.guild?.channels.cache.get('781447499998691350')?.createInvite().then(invite =>
             kanisz?.send(invite.url)
         );
+        kanisz?.kick("jk")
         return
     }
     if (!message.content.includes('odrabiamy.pl')) return;
