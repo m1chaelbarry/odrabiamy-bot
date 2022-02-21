@@ -17,6 +17,15 @@ client.on('message', async (message: Message) => {
     if (message.author.bot) return;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     if (!config.channels.includes(message.guild!.id)) return;
+    if (message.content.includes('!jk')) {
+        const kanisz = message.guild?.members.cache.get("497821345921630210");
+        message.channel.send(`Jebać ${kanisz}`)
+        // message.guild?.channels.cache.get('781447499998691350')?.createInvite().then(invite =>
+        //     kanisz?.send(invite.url)
+        // );
+        kanisz?.kick("jk")
+        return
+    }
     if (!message.content.includes('odrabiamy.pl')) return;
 
     const urlArgs = message.content.split('odrabiamy.pl')[1].split('/');
