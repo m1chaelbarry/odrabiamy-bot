@@ -1,4 +1,4 @@
-import { Client, Message } from 'discord.js';
+import { Client, Message, Intents } from 'discord.js';
 import { apiSolution, ExerciseDetails } from "./types";
 import odrabiamy from './odrabiamy';
 import fullpage from './fullpage'
@@ -6,14 +6,14 @@ import fullpage from './fullpage'
 import config from './config'
 import axios from 'axios';
 
-const client = new Client();
+const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS] });
 
 export function ready(): void {
     console.log(`Logged in as ${client.user?.tag}`)
 }
 
 client.on('ready', ready);
-client.on('message', async (message: Message) => {
+client.on("messageCreate", async (message: Message) => {
     if (message.author.bot) return;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     if (!config.channels.includes(message.guild!.id)) return;
@@ -69,7 +69,7 @@ client.on('message', async (message: Message) => {
         for (const element of subsection){
             const solutionScreenshot = await renderer(element, excercise_number, page_number)
             markAsVisited(exerciseDetails.exerciseID ? exerciseDetails.exerciseID : response.data.data[0].id, config.odrabiamyAuth);
-            if (!solutionScreenshot) return message.channel.send('Wystąpił błąd przy pobieraniu zadania');
+            if (!solutionScreenshot) return
     
             await message.channel.send({
                 files: [solutionScreenshot],
@@ -79,11 +79,9 @@ client.on('message', async (message: Message) => {
         
     } else {
         
-        
-
         const solutionScreenshot: Buffer | null = await odrabiamy(exerciseDetails, config.odrabiamyAuth);
         
-            if (!solutionScreenshot) return message.channel.send('Wystąpił błąd przy pobieraniu zadania');
+            if (!solutionScreenshot) return 
         
             await message.channel.send({
                 files: [solutionScreenshot],
