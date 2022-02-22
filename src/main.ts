@@ -18,7 +18,11 @@ client.on("messageCreate", async (message: Message) => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     if (!config.channels.includes(message.guild!.id)) return;
     if (!message.content.includes('odrabiamy.pl')) return;
+    await odrabiamyCommand(message)
+    
+})
 
+async function odrabiamyCommand(message: Message) {
     const urlArgs = message.content.split('odrabiamy.pl')[1].split('/');
     const exerciseDetails: ExerciseDetails = {
         bookID: urlArgs[2].split('-')[1],
@@ -89,10 +93,7 @@ client.on("messageCreate", async (message: Message) => {
     }
     if (emoji) {emoji.delete()}
 
-
-    
-
-})
+}
 
 async function getResponse(exerciseDetails: ExerciseDetails) {
     return await axios.request({
