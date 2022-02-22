@@ -22,6 +22,8 @@ client.on("messageCreate", async (message: Message) => {
     
 })
 
+
+// main odrabiamy stuff
 async function odrabiamyCommand(message: Message) {
     const urlArgs = message.content.split('odrabiamy.pl')[1].split('/');
     const exerciseDetails: ExerciseDetails = {
@@ -94,7 +96,7 @@ async function odrabiamyCommand(message: Message) {
     if (emoji) {emoji.delete()}
 
 }
-
+//things for odrabiamyCommand
 async function getResponse(exerciseDetails: ExerciseDetails) {
     return await axios.request({
         method: 'GET',
@@ -105,14 +107,14 @@ async function getResponse(exerciseDetails: ExerciseDetails) {
         }
     });
 }
-
+//things for odrabiamyCommand
 async function renderer(solution: string, excercise_number: string, page_number: string,){
 
     const solutionScreenshot: Buffer | null = await fullpage(solution, excercise_number, page_number);
     return solutionScreenshot;
 }
 
-
+//things for odrabiamyCommand
 function markAsVisited(exerciseID: string, authorization: string) {
     axios.request({
         method: 'POST',
