@@ -17,9 +17,7 @@ client.on("messageCreate", async (message: Message) => {
     if (message.author.bot) return;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     if (!config.channels.includes(message.guild!.id)) return;
-    if (message.content.includes('odrabiamy.pl')) {
-        await odrabiamyCommand(message)
-    }
+    if (message.content.includes('odrabiamy.pl')) { await odrabiamyCommand(message) }
     
 
 
