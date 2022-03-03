@@ -9,7 +9,7 @@ export default function getExerciseImage(solution: string, excercise_number: str
         await page.setViewport({width: 780, height: 1});
         let decoded_solution = solution
         decoded_solution = `<h1 style="font-size:30;"> ${excercise_number}/${page_number} </h1>` + decoded_solution
-        decoded_solution = '<style>html * {font-family: MulishVariable,sans-serif;}</style>' + decoded_solution
+        decoded_solution = `<style>html * {font-family: MulishVariable,sans-serif;${decoded_solution.includes('class="math') ? '' : 'background: #36393E; color: #FFFFFF'};}</style>` + decoded_solution
         decoded_solution = decoded_solution.replaceAll(/<object class="math small".*?>/g, '')
         const loaded = page.waitForNavigation({waitUntil: 'load'});
         const loaded2 = page.waitForTimeout(2500)

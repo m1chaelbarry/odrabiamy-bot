@@ -1,4 +1,4 @@
-import { Client, Message } from 'discord.js';
+import { Client, Message, Intents } from 'discord.js';
 import { apiSolution, ExerciseDetails } from "./types";
 import odrabiamy from './odrabiamy';
 import fullpage from './fullpage'
@@ -6,19 +6,26 @@ import fullpage from './fullpage'
 import config from './config'
 import axios from 'axios';
 
-const client = new Client();
+const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS] });
 
 export function ready(): void {
     console.log(`Logged in as ${client.user?.tag}`)
 }
 
 client.on('ready', ready);
-client.on('message', async (message: Message) => {
+client.on("messageCreate", async (message: Message) => {
     if (message.author.bot) return;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     if (!config.channels.includes(message.guild!.id)) return;
-    if (!message.content.includes('odrabiamy.pl')) return;
+    if (message.content.includes('odrabiamy.pl')) { await odrabiamyCommand(message) }
+    
 
+
+})
+
+
+// main odrabiamy stuff
+async function odrabiamyCommand(message: Message) {
     const urlArgs = message.content.split('odrabiamy.pl')[1].split('/');
     const exerciseDetails: ExerciseDetails = {
         bookID: urlArgs[2].split('-')[1],
@@ -69,7 +76,7 @@ client.on('message', async (message: Message) => {
         for (const element of subsection){
             const solutionScreenshot = await renderer(element, excercise_number, page_number)
             markAsVisited(exerciseDetails.exerciseID ? exerciseDetails.exerciseID : response.data.data[0].id, config.odrabiamyAuth);
-            if (!solutionScreenshot) return message.channel.send('Wystąpił błąd przy pobieraniu zadania');
+            if (!solutionScreenshot) return
     
             await message.channel.send({
                 files: [solutionScreenshot],
@@ -79,11 +86,9 @@ client.on('message', async (message: Message) => {
         
     } else {
         
-        
-
         const solutionScreenshot: Buffer | null = await odrabiamy(exerciseDetails, config.odrabiamyAuth);
         
-            if (!solutionScreenshot) return message.channel.send('Wystąpił błąd przy pobieraniu zadania');
+            if (!solutionScreenshot) return 
         
             await message.channel.send({
                 files: [solutionScreenshot],
@@ -91,11 +96,8 @@ client.on('message', async (message: Message) => {
     }
     if (emoji) {emoji.delete()}
 
-
-    
-
-})
-
+}
+//things for odrabiamyCommand
 async function getResponse(exerciseDetails: ExerciseDetails) {
     return await axios.request({
         method: 'GET',
@@ -106,14 +108,14 @@ async function getResponse(exerciseDetails: ExerciseDetails) {
         }
     });
 }
-
+//things for odrabiamyCommand
 async function renderer(solution: string, excercise_number: string, page_number: string,){
 
     const solutionScreenshot: Buffer | null = await fullpage(solution, excercise_number, page_number);
     return solutionScreenshot;
 }
 
-
+//things for odrabiamyCommand
 function markAsVisited(exerciseID: string, authorization: string) {
     axios.request({
         method: 'POST',

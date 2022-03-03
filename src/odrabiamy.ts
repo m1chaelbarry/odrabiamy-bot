@@ -29,10 +29,12 @@ export default function getExerciseImage(exerciseDetails: ExerciseDetails, autho
         solution = encodeURI(solution)
         let decoded_solution = decodeURI(solution)
         decoded_solution = `<h1 style="font-size:30;"> ${excercise_number}/${page_number} </h1>` + decoded_solution
-        decoded_solution = '<style>html * {font-family: MulishVariable,sans-serif;}</style>' + decoded_solution
+        decoded_solution = `<style>html * {font-family: MulishVariable,sans-serif;${decoded_solution.includes('class="math') ? '' : 'background: #36393E; color: #FFFFFF;'}}</style>` + decoded_solution
         decoded_solution = decoded_solution.replaceAll(/<object class="math small".*?>/g, '')
         const loaded = page.waitForNavigation({waitUntil: 'load'});
+        const loaded2 = page.waitForTimeout(2500)
         await page.setContent(decoded_solution, {waitUntil: 'networkidle0'});
+        await loaded2;
         await loaded
         const bodyHeight = await page.evaluate(() => document.body.scrollHeight);
         const bodyWidth = await page.evaluate(() => document.body.scrollWidth);
