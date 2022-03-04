@@ -23,7 +23,7 @@ export default function getExerciseImage(exerciseDetails: ExerciseDetails, autho
 
         const page_number = exerciseDetails.page
         
-        const browser = await puppeteer.launch({timeout: 100000});
+        const browser = await puppeteer.launch({timeout: 100000, args: ['--no-sandbox', '--disable-setuid-sandbox']});
         const page = await browser.newPage();
         await page.setViewport({width: 780, height: 1});
         solution = encodeURI(solution)
