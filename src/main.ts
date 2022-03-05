@@ -1,6 +1,5 @@
 import { Client, Message, Intents } from 'discord.js';
 import { apiSolution, ExerciseDetails } from "./types";
-import odrabiamy from './odrabiamy';
 import fullpage from './renderScreeshot'
 
 import config from './config'
