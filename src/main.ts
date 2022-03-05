@@ -1,7 +1,7 @@
 import { Client, Message, Intents } from 'discord.js';
 import { apiSolution, ExerciseDetails } from "./types";
 import odrabiamy from './odrabiamy';
-import fullpage from './fullpage'
+import fullpage from './renderScreeshot'
 
 import config from './config'
 import axios from 'axios';
@@ -9,7 +9,7 @@ import axios from 'axios';
 const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS] });
 
 export function ready(): void {
-    console.log(`Logged in as ${client.user?.tag}`)
+    console.log(`Logged in as ${client.user.tag}`)
 }
 
 client.on('ready', ready);
@@ -18,11 +18,16 @@ client.on("messageCreate", async (message: Message) => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     if (!config.channels.includes(message.guild!.id)) return;
     if (message.content.includes('odrabiamy.pl')) { await odrabiamyCommand(message) }
+    if (message.content.includes('#!')) { await gowno(message) }
+
     
-
-
 })
 
+async function gowno(message: Message) {
+    const snd = String(message).substring(2)
+    message.delete()
+    await message.channel.send(snd)
+}
 
 // main odrabiamy stuff
 async function odrabiamyCommand(message: Message) {
@@ -83,17 +88,39 @@ async function odrabiamyCommand(message: Message) {
             })
         }
 
-        
     } else {
-        
-        const solutionScreenshot: Buffer | null = await odrabiamy(exerciseDetails, config.odrabiamyAuth);
-        
-            if (!solutionScreenshot) return 
-        
-            await message.channel.send({
-                files: [solutionScreenshot],
-            })
+
+        const response = await getResponse(exerciseDetails);
+
+        let solution = exerciseDetails.exerciseID
+            ? response.data.data.filter((sol: apiSolution) => sol.id.toString() === exerciseDetails.exerciseID)[0].solution
+            : response.data.data[0].solution;
+
+        const excercise_number = exerciseDetails.exerciseID 
+            ? response.data.data.filter((sol: apiSolution) => sol.id.toString() === exerciseDetails.exerciseID)[0].number
+            : response.data.data[0].number;
+
+        const page_number = exerciseDetails.page
+
+        const solutionScreenshot = await renderer(solution, excercise_number, page_number)
+        markAsVisited(exerciseDetails.exerciseID ? exerciseDetails.exerciseID : response.data.data[0].id, config.odrabiamyAuth);
+        if (!solutionScreenshot) return
+
+        await message.channel.send({
+            files: [solutionScreenshot],
+        })
     }
+
+    // } else {
+        
+    //     const solutionScreenshot: Buffer | null = await odrabiamy(exerciseDetails, config.odrabiamyAuth);
+        
+    //         if (!solutionScreenshot) return 
+        
+    //         await message.channel.send({
+    //             files: [solutionScreenshot],
+    //         })
+    // }
     if (emoji) {emoji.delete()}
 
 }

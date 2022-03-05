@@ -4,7 +4,7 @@ export default function getExerciseImage(solution: string, excercise_number: str
     return new Promise(async (resolve) => {
 
         
-        const browser = await puppeteer.launch({timeout: 100000});
+        const browser = await puppeteer.launch({timeout: 100000, args: ['--no-sandbox', '--disable-setuid-sandbox']});
         const page = await browser.newPage();
         await page.setViewport({width: 780, height: 1});
         let decoded_solution = solution
