@@ -1,6 +1,6 @@
 import { Client, Message, Intents } from 'discord.js';
 import { apiSolution, ExerciseDetails } from "./types";
-import fullpage from './renderScreeshot'
+import renderScreenshot from './renderScreeshot'
 
 import config from './config'
 import axios from 'axios';
@@ -137,7 +137,7 @@ async function getResponse(exerciseDetails: ExerciseDetails) {
 //things for odrabiamyCommand
 async function renderer(solution: string, excercise_number: string, page_number: string,){
 
-    const solutionScreenshot: Buffer | null = await fullpage(solution, excercise_number, page_number);
+    const solutionScreenshot: Buffer | null = await renderScreenshot(solution, excercise_number, page_number);
     return solutionScreenshot;
 }
 
