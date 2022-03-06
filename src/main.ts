@@ -8,7 +8,7 @@ import axios from 'axios';
 const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS] });
 
 export function ready(): void {
-    console.log(`Logged in as ${client.user.tag}`)
+    console.log(`Logged in as ${client.user.tag} at ${getCurrentTime}`)
 }
 
 client.on('ready', ready);
@@ -41,6 +41,8 @@ async function odrabiamyCommand(message: Message) {
     await message.delete() 
     const response = await getResponse(exerciseDetails);
     const book_name = response.data.data[0].book.name
+    const author = message.author.tag
+    console.log(`${author} requested ${message.content} at ${await getCurrentTime()}`)
 
     if (message.content.includes('!str')) {
 
@@ -52,7 +54,7 @@ async function odrabiamyCommand(message: Message) {
             const excercise_number = response.data.data[num].number;
             const page_number = exerciseDetails.page
             const solutionScreenshot = await renderScreenshot(solution, excercise_number, page_number, book_name)
-            markAsVisited(response.data.data[num].id, config.odrabiamyAuth);
+            await markAsVisited(response.data.data[num].id, config.odrabiamyAuth);
             if (!solutionScreenshot) break;
         
             await message.channel.send({
@@ -80,7 +82,7 @@ async function odrabiamyCommand(message: Message) {
 
         for (const element of subsection){
             const solutionScreenshot = await renderScreenshot(element, excercise_number, page_number, book_name)
-            markAsVisited(exerciseDetails.exerciseID ? exerciseDetails.exerciseID : response.data.data[0].id, config.odrabiamyAuth);
+            await markAsVisited(exerciseDetails.exerciseID ? exerciseDetails.exerciseID : response.data.data[0].id, config.odrabiamyAuth);
             if (!solutionScreenshot) return
     
             await message.channel.send({
@@ -103,7 +105,7 @@ async function odrabiamyCommand(message: Message) {
         const page_number = exerciseDetails.page
 
         const solutionScreenshot = await renderScreenshot(solution, excercise_number, page_number, book_name)
-        markAsVisited(exerciseDetails.exerciseID ? exerciseDetails.exerciseID : response.data.data[0].id, config.odrabiamyAuth);
+        await markAsVisited(exerciseDetails.exerciseID ? exerciseDetails.exerciseID : response.data.data[0].id, config.odrabiamyAuth);
         if (!solutionScreenshot) return
 
         await message.channel.send({
@@ -137,7 +139,7 @@ async function getResponse(exerciseDetails: ExerciseDetails) {
 }
 
 //things for odrabiamyCommand
-function markAsVisited(exerciseID: string, authorization: string) {
+async function markAsVisited(exerciseID: string, authorization: string) {
     axios.request({
         method: 'POST',
         url: `https://odrabiamy.pl/api/v2/exercises/${exerciseID}/visited`,
@@ -147,6 +149,22 @@ function markAsVisited(exerciseID: string, authorization: string) {
         }
     })
 }
+
+async function getCurrentTime() {
+    var date_ob = new Date();
+    var day = ("0" + date_ob.getDate()).slice(-2);
+    var month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+    var year = date_ob.getFullYear();
+    
+    var date = year + "-" + month + "-" + day;
+        
+    var hours = date_ob.getHours();
+    var minutes = date_ob.getMinutes();
+    var seconds = date_ob.getSeconds();
+    
+    var dateTime = year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
+    return dateTime
+} 
 
 
 client.login(config.token)
