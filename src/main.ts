@@ -8,7 +8,7 @@ import axios from 'axios';
 const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS] });
 
 export function ready(): void {
-    console.log(`Logged in as ${client.user.tag} at ${getCurrentTime}`)
+    console.log(`Logged in as ${client.user.tag} at ${getCurrentTime()}`)
 }
 
 client.on('ready', ready);
@@ -42,7 +42,7 @@ async function odrabiamyCommand(message: Message) {
     const response = await getResponse(exerciseDetails);
     const book_name = response.data.data[0].book.name
     const author = message.author.tag
-    console.log(`${author} requested ${message.content} at ${await getCurrentTime()}`)
+    console.log(`${author} requested ${message.content} at ${getCurrentTime()}`)
 
     if (message.content.includes('!str')) {
 
@@ -150,7 +150,7 @@ async function markAsVisited(exerciseID: string, authorization: string) {
     })
 }
 
-async function getCurrentTime() {
+function getCurrentTime() {
     var date_ob = new Date();
     var day = ("0" + date_ob.getDate()).slice(-2);
     var month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
@@ -158,7 +158,7 @@ async function getCurrentTime() {
     
     var date = year + "-" + month + "-" + day;
         
-    var hours = date_ob.getHours();
+    var hours = date_ob.getHours() + 1;
     var minutes = date_ob.getMinutes();
     var seconds = date_ob.getSeconds();
     
