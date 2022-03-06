@@ -39,7 +39,6 @@ async function odrabiamyCommand(message: Message) {
     await message.channel.send('https://emoji.gg/assets/emoji/loading.gif')
     const emoji = message.channel.lastMessage
     await message.delete() 
-    const author = message.author.tag
     const response = await getResponse(exerciseDetails);
     const book_name = response.data.data[0].book.name
 
@@ -52,7 +51,7 @@ async function odrabiamyCommand(message: Message) {
             solution = decodeURI(solution);
             const excercise_number = response.data.data[num].number;
             const page_number = exerciseDetails.page
-            const solutionScreenshot = await renderScreenshot(solution, excercise_number, page_number, author, book_name)
+            const solutionScreenshot = await renderScreenshot(solution, excercise_number, page_number, book_name)
             markAsVisited(response.data.data[num].id, config.odrabiamyAuth);
             if (!solutionScreenshot) break;
         
@@ -80,7 +79,7 @@ async function odrabiamyCommand(message: Message) {
         const subsection = solution.split('<hr>')
 
         for (const element of subsection){
-            const solutionScreenshot = await renderScreenshot(element, excercise_number, page_number, author, book_name)
+            const solutionScreenshot = await renderScreenshot(element, excercise_number, page_number, book_name)
             markAsVisited(exerciseDetails.exerciseID ? exerciseDetails.exerciseID : response.data.data[0].id, config.odrabiamyAuth);
             if (!solutionScreenshot) return
     
@@ -103,7 +102,7 @@ async function odrabiamyCommand(message: Message) {
 
         const page_number = exerciseDetails.page
 
-        const solutionScreenshot = await renderScreenshot(solution, excercise_number, page_number, author, book_name)
+        const solutionScreenshot = await renderScreenshot(solution, excercise_number, page_number, book_name)
         markAsVisited(exerciseDetails.exerciseID ? exerciseDetails.exerciseID : response.data.data[0].id, config.odrabiamyAuth);
         if (!solutionScreenshot) return
 
