@@ -9,12 +9,18 @@ const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAG
 
 export function ready(): void {
     console.log(`Logged in as ${client.user.tag} at ${getCurrentTime()}`)
+    client.user.setPresence({
+        activities: [{ 
+          name: "makin 2a more stupid",
+          type: "COMPETING"
+        }],
+        status: "dnd"
+    })
 }
 
 client.on('ready', ready);
 client.on("messageCreate", async (message: Message) => {
     if (message.author.bot) return;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     if (!config.channels.includes(message.guild!.id)) return;
     if (message.content.includes('odrabiamy.pl')) { await odrabiamyCommand(message) }
     if (message.content.includes('#!')) { await gowno(message) }
