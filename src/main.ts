@@ -7,11 +7,11 @@ import axios from 'axios';
 
 const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS] });
 
-function ready(): void {
+export function ready(): void {
     console.log(`Logged in as ${client.user.tag} at ${getCurrentTime()}`)
     // get channel id from config
     const file = `${__dirname}/logChannel.json`
-    const channel = JSON.parse(fs.readFileSync(file).toString())
+    const channel = JSON.parse(fs.readFileSync(file).toString()).logChannel[0]
     // send message to logging channel
     const channelobj = client.channels.cache.get(channel) as TextChannel
     channelobj.send(`Logged in as ${client.user.tag}`)
@@ -38,7 +38,7 @@ client.on("messageCreate", async (message: Message) => {
 
 async function setLoggingChannel(message: Message) {
     const channel = message.channel.id
-    // create new txt file
+    // creatre new txt file
     const file = `${__dirname}/logChannel.json`
     // write channel id to file
     fs.writeFileSync(file, JSON.stringify({logChannel: [channel]}))
