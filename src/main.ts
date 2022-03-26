@@ -7,7 +7,7 @@ import axios from 'axios';
 
 const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS] });
 
-export function ready(): void {
+function ready(): void {
     console.log(`Logged in as ${client.user.tag} at ${getCurrentTime()}`)
     // get channel id from config
     const file = `${__dirname}/logChannel.json`
