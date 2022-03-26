@@ -1,7 +1,7 @@
-import { Client, Message, Intents } from 'discord.js';
+import { Client, Message, Intents, TextChannel } from 'discord.js';
 import { apiSolution, ExerciseDetails } from "./types";
 import renderScreenshot from './renderScreeshot'
-
+import fs from 'fs';
 import config from './config'
 import axios from 'axios';
 
@@ -9,9 +9,16 @@ const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAG
 
 export function ready(): void {
     console.log(`Logged in as ${client.user.tag} at ${getCurrentTime()}`)
+    // get channel id from config
+    const file = `${__dirname}/logChannel.json`
+    const channel = JSON.parse(fs.readFileSync(file).toString())
+    // send message to logging channel
+    const channelobj = client.channels.cache.get(channel) as TextChannel
+    channelobj.send(`Logged in as ${client.user.tag}`)
+
     client.user.setPresence({
         activities: [{ 
-          name: "makin 2a more stupid",
+          name: "making 2a more stupid",
           type: "COMPETING"
         }],
         status: "dnd"
@@ -22,11 +29,22 @@ client.on('ready', ready);
 client.on("messageCreate", async (message: Message) => {
     if (message.author.bot) return;
     if (!config.channels.includes(message.guild!.id)) return;
+    if (message.content.startsWith('!loggingchannel')) { await setLoggingChannel(message) }
     if (message.content.includes('odrabiamy.pl')) { await odrabiamyCommand(message) }
     if (message.content.includes('#!')) { await gowno(message) }
 
     
 })
+
+async function setLoggingChannel(message: Message) {
+    const channel = message.channel.id
+    // create new txt file
+    const file = `${__dirname}/logChannel.json`
+    // write channel id to file
+    fs.writeFileSync(file, JSON.stringify({logChannel: [channel]}))
+    // send message to channel
+    await message.channel.send(`Logging channel set to ${message.channel}`)
+}
 
 async function gowno(message: Message) {
     const snd = String(message).substring(2)
