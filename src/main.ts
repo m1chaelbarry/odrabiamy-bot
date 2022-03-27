@@ -35,12 +35,11 @@ client.on("messageCreate", async (message: Message) => {
     if (message.content.startsWith('!loggingchannel')) { await setLoggingChannel(message); }
     if (message.content.includes('odrabiamy.pl/pytania-i-odpowiedzi/')) { await warning(message); return} 
     if (message.content.includes('odrabiamy.pl')) { await odrabiamyCommand(message) }
-    if (message.content.includes('#!')) { await copycat(message) }
-
-    
+    if (message.content.startsWith('#!')) { await copycat(message) }
+    if (message.content.startsWith('!odrabiamyhelp')) { await helpCommand(message); }
+    if (message.content.startsWith('!pinger')) { await pinger(message) }
 
 })
-
 
 // main odrabiamy stuff
 async function odrabiamyCommand(message: Message) {
@@ -66,7 +65,7 @@ async function odrabiamyCommand(message: Message) {
     const book_name = response.data.data[0].book.name
     const author = message.author.tag
     console.log(`${author} requested ${message.content} at ${getCurrentTime()}`)
-    
+
     if (message.content.includes('!str')) {
         
         for (let num = 0; num < response.data.data.length; num++) {
@@ -137,7 +136,7 @@ async function odrabiamyCommand(message: Message) {
     
     await message.delete() 
     if (emoji) {emoji.delete()}
-            
+
 }
 
 //things for odrabiamyCommand
@@ -170,8 +169,6 @@ function getCurrentTime() {
     var month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
     var year = date_ob.getFullYear();
     
-    var date = year + "-" + month + "-" + day;
-    
     var hours = date_ob.getHours() + 2;
     var minutes = date_ob.getMinutes();
     var seconds = date_ob.getSeconds();
@@ -179,7 +176,6 @@ function getCurrentTime() {
     var dateTime = year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
     return dateTime
 } 
-
 
 async function warning(message: Message) {
     // respond to message
@@ -202,6 +198,27 @@ async function copycat(message: Message) {
     await message.channel.send(snd)
 }
 
+async function helpCommand(message: Message) {
+    // send message to channel
+    await message.channel.send(`
+        wyslij linka z zadaniem z odrabiamy, a bot ci wyśle odpowiedz
+    !str <link> - wysyła całą stronę
+    !split <link> - wysyła całą stronę podzieloną na podpunkty
+    !odrabiamyhelp - wysyła tą wiadomość
+    !loggingchannel - wysyła kanał na którym bot będzie wysyłał logi
+    #! bot wysyła to co ty
+    `)
+}
 
+async function pinger(message: Message) {
+    // get user from mention
+    const user = message.mentions.users.first()
+    // send message at random interval from 10 seconds to 10 hours
+    setInterval(async () => {
+        await message.channel.send(`${user} wypierdalaj`)
+    }
+    , Math.floor(Math.random() * (1000 * 60 * 60 * 10)));
+    
+}
 
 client.login(config.token)
