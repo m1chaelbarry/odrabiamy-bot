@@ -32,12 +32,18 @@ client.once('ready', ready);
 client.on("messageCreate", async (message: Message) => {
     if (message.author.bot) return;
     if (!config.channels.includes(message.guild!.id)) return;
-    if (message.content.startsWith('!loggingchannel')) { await setLoggingChannel(message) }
+    if (message.content.startsWith('!loggingchannel')) { await setLoggingChannel(message); }
+    if (message.content.includes('odrabiamy.pl/pytania-i-odpowiedzi/')) { await warning(message); return} 
     if (message.content.includes('odrabiamy.pl')) { await odrabiamyCommand(message) }
-    if (message.content.includes('#!')) { await gowno(message) }
-
+    if (message.content.includes('#!')) { await copycat(message) }
     
 })
+
+
+async function warning(message: Message) {
+    // respond to message
+    await message.channel.send(`${message.author}! Bot nie działa na pytania i odpowiedzi`)
+}
 
 async function setLoggingChannel(message: Message) {
     const channel = message.channel.id
@@ -49,7 +55,7 @@ async function setLoggingChannel(message: Message) {
     await message.channel.send(`Logging channel set to ${message.channel}`)
 }
 
-async function gowno(message: Message) {
+async function copycat(message: Message) {
     const snd = String(message).substring(2)
     message.delete()
     await message.channel.send(snd)
@@ -71,7 +77,6 @@ async function odrabiamyCommand(message: Message) {
     console.log(`${author} requested ${message.content} at ${getCurrentTime()}`)
     
     if (message.content.includes('!str')) {
-        
         
         for (let num = 0; num < response.data.data.length; num++) {
             let solution = response.data.data[num].solution;
