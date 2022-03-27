@@ -82,9 +82,9 @@ async function odrabiamyCommand(message: Message) {
                 files: [solutionScreenshot],
             })
         }
-        
+
     } else if (message.content.includes('!split')) {
-        
+
         const response = await getResponse(exerciseDetails);
         
         let solution = exerciseDetails.exerciseID
@@ -173,9 +173,9 @@ function getCurrentTime() {
     var minutes = (date_ob.getMinutes()).toString();
     var seconds = (date_ob.getSeconds()).toString();
     
-    if (hours.length < 2) { hours = "0" + hours;}
-    if (minutes.length < 2) { minutes = "0" + minutes;}
-    if (seconds.length < 2) { seconds = "0" + seconds;}
+    if (hours.length < 2) { hours = "0" + hours; }
+    if (minutes.length < 2) { minutes = "0" + minutes; }
+    if (seconds.length < 2) { seconds = "0" + seconds; }
     
     var dateTime = year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
     return dateTime
@@ -205,13 +205,12 @@ async function copycat(message: Message) {
 async function helpCommand(message: Message) {
     // send message to channel
     await message.channel.send(`
-        wyslij linka z zadaniem z odrabiamy, a bot ci wyśle odpowiedz
-    !str <link> - wysyła całą stronę
-    !split <link> - wysyła całą stronę podzieloną na podpunkty
-    !odrabiamyhelp - wysyła tą wiadomość
-    !loggingchannel - wysyła kanał na którym bot będzie wysyłał logi
-    #! bot wysyła to co ty
-    `)
+wyslij linka z zadaniem z odrabiamy, a bot ci wyśle odpowiedz
+!str <link> - wysyła całą stronę
+!split <link> - wysyła całą stronę podzieloną na podpunkty
+!odrabiamyhelp - wysyła tą wiadomość
+!loggingchannel - wysyła kanał na którym bot będzie wysyłał logi
+#! bot wysyła to co ty`)
 }
 
 async function pinger(message: Message) {
@@ -222,7 +221,6 @@ async function pinger(message: Message) {
         await message.channel.send(`${user} wypierdalaj`)
     }
     , Math.floor(Math.random() * (1000 * 60 * 60 * 10)));
-    
 }
 
 client.login(config.token)
