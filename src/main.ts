@@ -169,9 +169,13 @@ function getCurrentTime() {
     var month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
     var year = date_ob.getFullYear();
     
-    var hours = date_ob.getHours() + 2;
-    var minutes = date_ob.getMinutes();
-    var seconds = date_ob.getSeconds();
+    var hours = (date_ob.getHours() + 2).toString();
+    var minutes = (date_ob.getMinutes()).toString();
+    var seconds = (date_ob.getSeconds()).toString();
+    
+    if (hours.length < 2) { hours = "0" + hours;}
+    if (minutes.length < 2) { minutes = "0" + minutes;}
+    if (seconds.length < 2) { seconds = "0" + seconds;}
     
     var dateTime = year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
     return dateTime
@@ -196,7 +200,7 @@ async function copycat(message: Message) {
     const snd = String(message).substring(2)
     message.delete()
     await message.channel.send(snd)
-}
+}   
 
 async function helpCommand(message: Message) {
     // send message to channel
