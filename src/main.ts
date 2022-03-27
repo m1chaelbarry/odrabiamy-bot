@@ -16,7 +16,7 @@ export function ready(): void {
         const channel = JSON.parse(fs.readFileSync(file).toString()).logChannel[0]
         // send message to logging channel
         const channelobj = client.channels.cache.get(channel) as TextChannel
-        channelobj.send(`Logged in as ${client.user.tag}`)
+        channelobj.send(`Bot turning on. Logged in as ${client.user.tag} at ${getCurrentTime()}`)
     }
 
     client.user.setPresence({
@@ -37,6 +37,7 @@ client.on("messageCreate", async (message: Message) => {
     if (message.content.includes('odrabiamy.pl')) { await odrabiamyCommand(message) }
     if (message.content.includes('#!')) { await copycat(message) }
     
+
 })
 
 
@@ -63,12 +64,22 @@ async function copycat(message: Message) {
 
 // main odrabiamy stuff
 async function odrabiamyCommand(message: Message) {
+    // check if message is in correct form, if not send message
+    // odrabiamy.pl/(string)/ksiazka-(number)/strona-(number)
+    const regex = /odrabiamy.pl\/(.*)\/ksiazka-(.*)\/strona-(.*)/
+    const match = regex.exec(message.content)
+    if (!match) {
+        await message.channel.send(`${message.author}! Coś jest nie tak z linkiem`)
+        return
+    }
+
     const urlArgs = message.content.split('odrabiamy.pl')[1].split('/');
     const exerciseDetails: ExerciseDetails = {
         bookID: urlArgs[2].split('-')[1],
         page: urlArgs[3].split('-')[1],
         exerciseID: urlArgs[4]?.split('-')[1],
     }
+
     await message.channel.send('https://emoji.gg/assets/emoji/loading.gif')
     const emoji = message.channel.lastMessage
     const response = await getResponse(exerciseDetails);
@@ -180,7 +191,7 @@ async function odrabiamyCommand(message: Message) {
             
             var date = year + "-" + month + "-" + day;
             
-            var hours = date_ob.getHours() + 1;
+            var hours = date_ob.getHours() + 2;
             var minutes = date_ob.getMinutes();
             var seconds = date_ob.getSeconds();
             
