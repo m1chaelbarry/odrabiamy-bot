@@ -36,31 +36,11 @@ client.on("messageCreate", async (message: Message) => {
     if (message.content.includes('odrabiamy.pl/pytania-i-odpowiedzi/')) { await warning(message); return} 
     if (message.content.includes('odrabiamy.pl')) { await odrabiamyCommand(message) }
     if (message.content.includes('#!')) { await copycat(message) }
+
     
 
 })
 
-
-async function warning(message: Message) {
-    // respond to message
-    await message.channel.send(`${message.author}! Bot nie działa na pytania i odpowiedzi`)
-}
-
-async function setLoggingChannel(message: Message) {
-    const channel = message.channel.id
-    // creatre new txt file
-    const file = `../logChannel.json`
-    // write channel id to file
-    fs.writeFileSync(file, JSON.stringify({logChannel: [channel]}))
-    // send message to channel
-    await message.channel.send(`Logging channel set to ${message.channel}`)
-}
-
-async function copycat(message: Message) {
-    const snd = String(message).substring(2)
-    message.delete()
-    await message.channel.send(snd)
-}
 
 // main odrabiamy stuff
 async function odrabiamyCommand(message: Message) {
@@ -158,46 +138,70 @@ async function odrabiamyCommand(message: Message) {
     await message.delete() 
     if (emoji) {emoji.delete()}
             
-    }
-        //things for odrabiamyCommand
-        async function getResponse(exerciseDetails: ExerciseDetails) {
-            return await axios.request({
-                method: 'GET',
-                url: `https://odrabiamy.pl/api/v2/exercises/page/premium/${exerciseDetails.page}/${exerciseDetails.bookID}`,
-                headers: {
-                    'user-agent': 'new_user_agent-huawei-142',
-                    Authorization: `Bearer ${config.odrabiamyAuth}`
-                }
-            });
+}
+
+//things for odrabiamyCommand
+async function getResponse(exerciseDetails: ExerciseDetails) {
+    return await axios.request({
+        method: 'GET',
+        url: `https://odrabiamy.pl/api/v2/exercises/page/premium/${exerciseDetails.page}/${exerciseDetails.bookID}`,
+        headers: {
+            'user-agent': 'new_user_agent-huawei-142',
+            Authorization: `Bearer ${config.odrabiamyAuth}`
         }
-        
-        //things for odrabiamyCommand
-        async function markAsVisited(exerciseID: string, authorization: string) {
-            axios.request({
-                method: 'POST',
-                url: `https://odrabiamy.pl/api/v2/exercises/${exerciseID}/visited`,
-                headers: {
-                    'user-agent': 'new_user_agent-huawei-142',
-                    Authorization: `Bearer ${authorization}`,
-                }
-            })
+    });
+}
+
+//things for odrabiamyCommand
+async function markAsVisited(exerciseID: string, authorization: string) {
+    axios.request({
+        method: 'POST',
+        url: `https://odrabiamy.pl/api/v2/exercises/${exerciseID}/visited`,
+        headers: {
+            'user-agent': 'new_user_agent-huawei-142',
+            Authorization: `Bearer ${authorization}`,
         }
-        
-        function getCurrentTime() {
-            var date_ob = new Date();
-            var day = ("0" + date_ob.getDate()).slice(-2);
-            var month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-            var year = date_ob.getFullYear();
-            
-            var date = year + "-" + month + "-" + day;
-            
-            var hours = date_ob.getHours() + 2;
-            var minutes = date_ob.getMinutes();
-            var seconds = date_ob.getSeconds();
-            
-            var dateTime = year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
+    })
+}
+
+function getCurrentTime() {   
+    var date_ob = new Date();
+    var day = ("0" + date_ob.getDate()).slice(-2);
+    var month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+    var year = date_ob.getFullYear();
+    
+    var date = year + "-" + month + "-" + day;
+    
+    var hours = date_ob.getHours() + 2;
+    var minutes = date_ob.getMinutes();
+    var seconds = date_ob.getSeconds();
+    
+    var dateTime = year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
     return dateTime
 } 
+
+
+async function warning(message: Message) {
+    // respond to message
+    await message.channel.send(`${message.author}! Bot nie działa na pytania i odpowiedzi`)
+}
+
+async function setLoggingChannel(message: Message) {
+    const channel = message.channel.id
+    // creatre new txt file
+    const file = `../logChannel.json`
+    // write channel id to file
+    fs.writeFileSync(file, JSON.stringify({logChannel: [channel]}))
+    // send message to channel
+    await message.channel.send(`Logging channel set to ${message.channel}`)
+}
+
+async function copycat(message: Message) {
+    const snd = String(message).substring(2)
+    message.delete()
+    await message.channel.send(snd)
+}
+
 
 
 client.login(config.token)
