@@ -38,7 +38,8 @@ client.on("messageCreate", async (message: Message) => {
     if (message.content.startsWith('#!')) { await copycat(message) }
     if (message.content.startsWith('!odrabiamyhelp')) { await helpCommand(message); }
     if (message.content.startsWith('!pinger')) { await pinger(message) }
-
+    if (message.content.includes('!zajebiscie')) { await zajebiscie(message) }
+    if (message.content.includes('!bezsensu')) { await bezsensu(message) }
 })
 
 // main odrabiamy stuff
@@ -203,6 +204,7 @@ async function copycat(message: Message) {
 }   
 
 async function helpCommand(message: Message) {
+    message.delete()
     // send message to channel
     await message.channel.send(`
 wyslij linka z zadaniem z odrabiamy, a bot ci wyśle odpowiedz
@@ -210,7 +212,9 @@ wyslij linka z zadaniem z odrabiamy, a bot ci wyśle odpowiedz
 !split <link> - wysyła całą stronę podzieloną na podpunkty
 !odrabiamyhelp - wysyła tą wiadomość
 !loggingchannel - wysyła kanał na którym bot będzie wysyłał logi
-#! bot wysyła to co ty`)
+#! bot wysyła to co ty
+!zajebiscie - ta, to zajebiscie
+!bezsensu - wypierdalaj`)
 }
 
 async function pinger(message: Message) {
@@ -222,5 +226,22 @@ async function pinger(message: Message) {
     }
     , Math.floor(Math.random() * (1000 * 60 * 60 * 10)));
 }
+
+async function zajebiscie(message: Message) {
+    message.delete()
+    // send photo to channel
+    await message.channel.send({
+        files: ['./zajebiscie.jpg']
+    })
+}
+
+async function bezsensu(message: Message) {
+    message.delete()
+    // send photo to channel
+    await message.channel.send({
+        files: ['./bezsensu.jpg']
+    })
+}
+
 
 client.login(config.token)
