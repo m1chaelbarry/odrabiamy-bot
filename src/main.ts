@@ -10,7 +10,7 @@ const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAG
 export function ready(): void {
     console.log(`Logged in as ${client.user.tag} at ${getCurrentTime()}`)
     // get channel id from config
-    const file = `../logChannel.json`
+    const file = `./logChannel.json`
     // if file exists
     if (fs.existsSync(file)) {
         const channel = JSON.parse(fs.readFileSync(file).toString()).logChannel[0]
@@ -189,7 +189,7 @@ async function warning(message: Message) {
 async function setLoggingChannel(message: Message) {
     const channel = message.channel.id
     // creatre new txt file
-    const file = `../logChannel.json`
+    const file = `./logChannel.json`
     // write channel id to file
     fs.writeFileSync(file, JSON.stringify({logChannel: [channel]}))
     // send message to channel
