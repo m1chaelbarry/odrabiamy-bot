@@ -37,7 +37,6 @@ client.on("messageCreate", async (message: Message) => {
     if (message.content.includes('odrabiamy.pl')) { await odrabiamyCommand(message) }
     if (message.content.startsWith('#!')) { await copycat(message) }
     if (message.content.startsWith('!odrabiamyhelp')) { await helpCommand(message); }
-    if (message.content.startsWith('!pinger')) { await pinger(message) }
     if (message.content.includes('!zajebiscie')) { await zajebiscie(message) }
     if (message.content.includes('!bezsensu')) { await bezsensu(message) }
 })
@@ -166,15 +165,15 @@ async function markAsVisited(exerciseID: string, authorization: string) {
 
 function getCurrentTime() {   
     var date_ob = new Date();
-    var day = ("0" + date_ob.getDate()).slice(-2);
+    var day = ("0" + date_ob.getDate())         .slice(-2);
     var month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
     var year = date_ob.getFullYear();
     
-    var hours = (date_ob.getHours() + 2).toString();
-    var minutes = (date_ob.getMinutes()).toString();
-    var seconds = (date_ob.getSeconds()).toString();
+    var hours =     (date_ob.getHours() + 2).toString();
+    var minutes = (date_ob.getMinutes())    .toString();
+    var seconds = (date_ob.getSeconds())    .toString();
     
-    if (hours.length < 2) { hours = "0" + hours; }
+    if (hours.length < 2)   { hours = "0"   + hours; }
     if (minutes.length < 2) { minutes = "0" + minutes; }
     if (seconds.length < 2) { seconds = "0" + seconds; }
     
@@ -215,16 +214,6 @@ wyslij linka z zadaniem z odrabiamy, a bot ci wyśle odpowiedz
 #! bot wysyła to co ty
 !zajebiscie - ta, to zajebiscie
 !bezsensu - wypierdalaj`)
-}
-
-async function pinger(message: Message) {
-    // get user from mention
-    const user = message.mentions.users.first()
-    // send message at random interval from 10 seconds to 10 hours
-    setInterval(async () => {
-        await message.channel.send(`${user} wypierdalaj`)
-    }
-    , Math.floor(Math.random() * (1000 * 60 * 60 * 10)));
 }
 
 async function zajebiscie(message: Message) {
