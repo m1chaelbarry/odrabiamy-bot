@@ -7,13 +7,16 @@ import axios from 'axios';
 
 const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS] });
 
+// path to logChannel.json one dir higher using __dirname 
+const logChannelPath = `${__dirname}/../logChannel.json`
+
+
+
 export function ready(): void {
     console.log(`Logged in as ${client.user.tag} at ${getCurrentTime()}`)
-    // get channel id from config
-    const file = `./logChannel.json`
     // if file exists
-    if (fs.existsSync(file)) {
-        const channel = JSON.parse(fs.readFileSync(file).toString()).logChannel[0]
+    if (fs.existsSync(logChannelPath)) {
+        const channel = JSON.parse(fs.readFileSync(logChannelPath).toString()).logChannel[0]
         // send message to logging channel
         const channelobj = client.channels.cache.get(channel) as TextChannel
         channelobj.send(`Bot turning on. Logged in as ${client.user.tag} at ${getCurrentTime()}`)
@@ -37,8 +40,8 @@ client.on("messageCreate", async (message: Message) => {
     if (message.content.includes('odrabiamy.pl')) { await odrabiamyCommand(message) }
     if (message.content.startsWith('#!')) { await copycat(message) }
     if (message.content.startsWith('!odrabiamyhelp')) { await helpCommand(message); }
-    if (message.content.includes('!zajebiscie')) { await zajebiscie(message) }
-    if (message.content.includes('!bezsensu')) { await bezsensu(message) }
+    if (message.content.startsWith('!zajebiscie')) { await zajebiscie(message) }
+    if (message.content.startsWith('!bezsensu')) { await bezsensu(message) }
 })
 
 // main odrabiamy stuff
@@ -139,7 +142,6 @@ async function odrabiamyCommand(message: Message) {
 
 }
 
-//things for odrabiamyCommand
 async function getResponse(exerciseDetails: ExerciseDetails) {
     return await axios.request({
         method: 'GET',
@@ -151,7 +153,6 @@ async function getResponse(exerciseDetails: ExerciseDetails) {
     });
 }
 
-//things for odrabiamyCommand
 async function markAsVisited(exerciseID: string, authorization: string) {
     axios.request({
         method: 'POST',
@@ -173,7 +174,7 @@ function getCurrentTime() {
     var minutes = (date_ob.getMinutes())    .toString();
     var seconds = (date_ob.getSeconds())    .toString();
     
-    if (hours.length < 2)   { hours = "0"   + hours; }
+    if (hours.length < 2)   { hours = "0"   + hours;   }
     if (minutes.length < 2) { minutes = "0" + minutes; }
     if (seconds.length < 2) { seconds = "0" + seconds; }
     
@@ -188,10 +189,8 @@ async function warning(message: Message) {
 
 async function setLoggingChannel(message: Message) {
     const channel = message.channel.id
-    // creatre new txt file
-    const file = `./logChannel.json`
     // write channel id to file
-    fs.writeFileSync(file, JSON.stringify({logChannel: [channel]}))
+    fs.writeFileSync(logChannelPath, JSON.stringify({logChannel: [channel]}))
     // send message to channel
     await message.channel.send(`Logging channel set to ${message.channel}`)
 }
