@@ -38,6 +38,7 @@ client.on("messageCreate", async (message: Message) => {
     if (message.content.startsWith("!tabaka")) { await tabaka(message) }
     if (message.content.startsWith("!addtabaka")) { await addTabaka(message) }
     if (message.content.startsWith("!remtabaka")) { await remTabaka(message) }
+    if (message.content.startsWith("!listtabaka")) { await listTabaka(message) }
     if (message.content.startsWith('!loggingchannel')) { await setLoggingChannel(message); }
     if (message.content.includes('odrabiamy.pl/pytania-i-odpowiedzi/')) { await warning(message); return} 
     if (message.content.includes('odrabiamy.pl')) { await odrabiamyCommand(message) }
@@ -235,6 +236,12 @@ async function bezsensu(message: Message) {
 }
 
 async function tabaka(message: Message) {
+    message.delete()
+
+    // get user mentioned in message, else get message author
+    const user = message.mentions.users.first() || message.author;
+
+
     // check if tabaki.json exists
     if (!fs.existsSync(tabakiPath)) {
         await message.channel.send('Brak tabak!')
@@ -249,14 +256,13 @@ async function tabaka(message: Message) {
 
     // send random tabaka to channel, then edit the message with the new tabaka after 1 second 8 times, then send new tabaka in bold
     const tabaka = tabakiFile.tabaki[Math.floor(Math.random() * tabakiFile.tabaki.length)]
-    const tabakaMessage = await message.channel.send(`Wybrana tabaka to... ${tabaka}`)
+    const tabakaMessage = await message.channel.send(`Tabaka dla ${user} to... ${tabaka}`)
     
     for (let i = 0; i < 8; i++) {
         await new Promise(resolve => setTimeout(resolve, 1000));
-        tabakaMessage.edit(`Wybrana tabaka to... ${tabakiFile.tabaki[Math.floor(Math.random() * tabakiFile.tabaki.length)]}`);
+        tabakaMessage.edit(`Tabaka dla ${user} to... ${tabakiFile.tabaki[Math.floor(Math.random() * tabakiFile.tabaki.length)]}`);
     }
-    await tabakaMessage.edit(`Wybrana tabaka to... **${tabakiFile.tabaki[Math.floor(Math.random() * tabakiFile.tabaki.length)]}**`)
-
+    await tabakaMessage.edit(`Tabaka dla ${user} to... **${tabakiFile.tabaki[Math.floor(Math.random() * tabakiFile.tabaki.length)]}**`)
 
 }
 
@@ -272,8 +278,11 @@ async function addTabaka(message: Message) {
     tabaki.tabaki.push(message.content.substring(11))
     // write tabaki.json file
     fs.writeFileSync(tabakiPath, JSON.stringify(tabaki))
-    // send message to channel
-    await message.channel.send(`Tabaka dodana!`)
+    // send message to channel, then delete it after 15 seconds
+    const replyMessage = await message.channel.send(`Dodano tabakę ${message.content.substring(11)}`)
+    await new Promise(resolve => setTimeout(resolve, 15000));
+    await replyMessage.delete()
+    await message.delete()
 }
 
 async function remTabaka(message: Message) {
@@ -282,7 +291,24 @@ async function remTabaka(message: Message) {
         fs.unlinkSync(tabakiPath)
     }
     // send message to channel
-    await message.channel.send(`Tabaki usunięte!`)
+    const replyMessage = await message.channel.send(`Tabaki usunięte!`)
+    await new Promise(resolve => setTimeout(resolve, 15000));
+    await replyMessage.delete()
+    await message.delete()
+}
+
+async function listTabaka(message: Message) {
+    // check if tabaki.json file exists and list all of its tabaki
+    if (!fs.existsSync(tabakiPath)) {
+        await message.channel.send('Brak tabak!')
+        return
+    }
+    // read tabaki.json file
+    const tabaki = JSON.parse(fs.readFileSync(tabakiPath, 'utf8'))
+    // send message to channel
+    await message.channel.send(`Tabaki:\n\t${tabaki.tabaki.join('\n\t')}`)
+    message.delete()
+
 }
 
 client.login(config.token)
