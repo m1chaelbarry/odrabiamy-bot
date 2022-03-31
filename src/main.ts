@@ -9,8 +9,7 @@ const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAG
 
 // path to logChannel.json one dir higher using __dirname 
 const logChannelPath = `${__dirname}/../logChannel.json`
-
-
+const linksPath = `${__dirname}/../links.json`
 
 export function ready(): void {
     console.log(`Logged in as ${client.user.tag} at ${getCurrentTime()}`)
@@ -230,6 +229,5 @@ async function bezsensu(message: Message) {
         files: ['./bezsensu.jpg']
     })
 }
-
 
 client.login(config.token)
