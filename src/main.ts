@@ -9,7 +9,6 @@ const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAG
 
 // path to logChannel.json one dir higher using __dirname 
 const logChannelPath = `${__dirname}/../logChannel.json`
-const tabakiPath = `${__dirname}/../tabaki.json`
 
 
 export function ready(): void {
@@ -21,31 +20,18 @@ export function ready(): void {
         const channelobj = client.channels.cache.get(channel) as TextChannel
         channelobj.send(`Bot turning on. Logged in as ${client.user.tag} at ${getCurrentTime()}`)
     }
-
-    client.user.setPresence({
-        activities: [{ 
-          name: "making 2a more stupid",
-          type: "COMPETING"
-        }],
-        status: "dnd"
-    })
 }
 
 client.once('ready', ready);
 client.on("messageCreate", async (message: Message) => {
     if (message.author.bot) return;
     if (!config.channels.includes(message.guild!.id)) return;
-    if (message.content.startsWith("!tabaka")) { await tabaka(message) }
-    if (message.content.startsWith("!addtabaka")) { await addTabaka(message) }
-    if (message.content.startsWith("!remtabaka")) { await remTabaka(message) }
-    if (message.content.startsWith("!listtabaka")) { await listTabaka(message) }
     if (message.content.startsWith('!loggingchannel')) { await setLoggingChannel(message); }
     if (message.content.includes('odrabiamy.pl/pytania-i-odpowiedzi/')) { await warning(message); return} 
     if (message.content.includes('odrabiamy.pl')) { await odrabiamyCommand(message) }
     if (message.content.startsWith('#!')) { await copycat(message) }
     if (message.content.startsWith('!odrabiamyhelp')) { await helpCommand(message); }
-    if (message.content.startsWith('!zajebiscie')) { await zajebiscie(message) }
-    if (message.content.startsWith('!bezsensu')) { await bezsensu(message) }
+
 })
 
 // main odrabiamy stuff
@@ -151,8 +137,8 @@ async function getResponse(exerciseDetails: ExerciseDetails) {
         method: 'GET',
         url: `https://odrabiamy.pl/api/v2/exercises/page/premium/${exerciseDetails.page}/${exerciseDetails.bookID}`,
         headers: {
-            'user-agent': 'new_user_agent-huawei-142',
-            Authorization: `Bearer ${config.odrabiamyAuth}`
+            'user-agent': 'new_user_agent-android-3.3.6',
+            Authorization: `bearer ${config.odrabiamyAuth}`
         }
     });
 }
@@ -162,8 +148,8 @@ async function markAsVisited(exerciseID: string, authorization: string) {
         method: 'POST',
         url: `https://odrabiamy.pl/api/v2/exercises/${exerciseID}/visited`,
         headers: {
-            'user-agent': 'new_user_agent-huawei-142',
-            Authorization: `Bearer ${authorization}`,
+            'user-agent': 'new_user_agent-android-3.3.6',
+            Authorization: `bearer ${authorization}`,
         }
     })
 }
@@ -215,8 +201,7 @@ wyslij linka z zadaniem z odrabiamy, a bot ci wyśle odpowiedz
 !odrabiamyhelp - wysyła tą wiadomość
 !loggingchannel - wysyła kanał na którym bot będzie wysyłał logi
 #! bot wysyła to co ty
-!zajebiscie - ta, to zajebiscie
-!bezsensu - wypierdalaj`)
+`)
 }
 
 async function zajebiscie(message: Message) {
@@ -233,82 +218,6 @@ async function bezsensu(message: Message) {
     await message.channel.send({
         files: ['./bezsensu.jpg']
     })
-}
-
-async function tabaka(message: Message) {
-    message.delete()
-
-    // get user mentioned in message, else get message author
-    const user = message.mentions.users.first() || message.author;
-
-
-    // check if tabaki.json exists
-    if (!fs.existsSync(tabakiPath)) {
-        await message.channel.send('Brak tabak!')
-        return
-    }
-    // check if tabaki.json isn't empty
-    const tabakiFile = JSON.parse(fs.readFileSync(tabakiPath, 'utf8'))
-    if (tabakiFile.tabaki.length === 0) {
-        await message.channel.send('Brak tabak!')
-        return
-    }
-
-    // send random tabaka to channel, then edit the message with the new tabaka after 1 second 8 times, then send new tabaka in bold
-    const tabaka = tabakiFile.tabaki[Math.floor(Math.random() * tabakiFile.tabaki.length)]
-    const tabakaMessage = await message.channel.send(`Tabaka dla ${user} to... ${tabaka}`)
-    
-    for (let i = 0; i < 8; i++) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        tabakaMessage.edit(`Tabaka dla ${user} to... ${tabakiFile.tabaki[Math.floor(Math.random() * tabakiFile.tabaki.length)]}`);
-    }
-    await tabakaMessage.edit(`Tabaka dla ${user} to... **${tabakiFile.tabaki[Math.floor(Math.random() * tabakiFile.tabaki.length)]}**`)
-
-}
-
-
-async function addTabaka(message: Message) {
-    // check if tabaki.json file exists and create it if not
-    if (!fs.existsSync(tabakiPath)) {
-        fs.writeFileSync(tabakiPath, JSON.stringify({tabaki: []}))
-    }
-    // read tabaki.json file
-    const tabaki = JSON.parse(fs.readFileSync(tabakiPath, 'utf8'))
-    // add tabaka to tabaki.json file
-    tabaki.tabaki.push(message.content.substring(11))
-    // write tabaki.json file
-    fs.writeFileSync(tabakiPath, JSON.stringify(tabaki))
-    // send message to channel, then delete it after 15 seconds
-    const replyMessage = await message.channel.send(`Dodano tabakę ${message.content.substring(11)}`)
-    await new Promise(resolve => setTimeout(resolve, 15000));
-    await replyMessage.delete()
-    await message.delete()
-}
-
-async function remTabaka(message: Message) {
-    // delete everything from tabaki.json file if it exists
-    if (fs.existsSync(tabakiPath)) {
-        fs.unlinkSync(tabakiPath)
-    }
-    // send message to channel
-    const replyMessage = await message.channel.send(`Tabaki usunięte!`)
-    await new Promise(resolve => setTimeout(resolve, 15000));
-    await replyMessage.delete()
-    await message.delete()
-}
-
-async function listTabaka(message: Message) {
-    // check if tabaki.json file exists and list all of its tabaki
-    if (!fs.existsSync(tabakiPath)) {
-        await message.channel.send('Brak tabak!')
-        return
-    }
-    // read tabaki.json file
-    const tabaki = JSON.parse(fs.readFileSync(tabakiPath, 'utf8'))
-    // send message to channel
-    await message.channel.send(`Tabaki:\n\t${tabaki.tabaki.join('\n\t')}`)
-    message.delete()
-
 }
 
 client.login(config.token)
