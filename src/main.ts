@@ -204,20 +204,4 @@ wyslij linka z zadaniem z odrabiamy, a bot ci wyśle odpowiedz
 `)
 }
 
-async function zajebiscie(message: Message) {
-    message.delete()
-    // send photo to channel
-    await message.channel.send({
-        files: ['./zajebiscie.jpg']
-    })
-}
-
-async function bezsensu(message: Message) {
-    message.delete()
-    // send photo to channel
-    await message.channel.send({
-        files: ['./bezsensu.jpg']
-    })
-}
-
 client.login(config.token)
