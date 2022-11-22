@@ -137,7 +137,7 @@ async function getResponse(exerciseDetails: ExerciseDetails) {
         method: 'GET',
         url: `https://odrabiamy.pl/api/v2/exercises/page/premium/${exerciseDetails.page}/${exerciseDetails.bookID}`,
         headers: {
-            'user-agent': 'new_user_agent-android-3.3.6',
+            'user-agent': 'new_user_agent-android-3.3.7',
             Authorization: `bearer ${config.odrabiamyAuth}`
         }
     });
@@ -148,7 +148,7 @@ async function markAsVisited(exerciseID: string, authorization: string) {
         method: 'POST',
         url: `https://odrabiamy.pl/api/v2/exercises/${exerciseID}/visited`,
         headers: {
-            'user-agent': 'new_user_agent-android-3.3.6',
+            'user-agent': 'new_user_agent-android-3.3.7',
             Authorization: `bearer ${authorization}`,
         }
     })
