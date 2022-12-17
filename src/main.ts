@@ -59,7 +59,7 @@ async function odrabiamyCommand(message: Message) {
     const author = message.author.tag
     console.log(`${author} requested ${message.content} at ${getCurrentTime()}`)
 
-    if (message.content.includes('!str')) {
+    if (message.content.includes('!str') || message.content.includes('!s')) {
         
         for (let num = 0; num < response.data.data.length; num++) {
             let solution = response.data.data[num].solution;
@@ -137,7 +137,7 @@ async function getResponse(exerciseDetails: ExerciseDetails) {
         method: 'GET',
         url: `https://odrabiamy.pl/api/v2/exercises/page/premium/${exerciseDetails.page}/${exerciseDetails.bookID}`,
         headers: {
-            'user-agent': 'new_user_agent-android-3.3.6',
+            'user-agent': 'new_user_agent-android-3.3.7',
             Authorization: `bearer ${config.odrabiamyAuth}`
         }
     });
@@ -148,7 +148,7 @@ async function markAsVisited(exerciseID: string, authorization: string) {
         method: 'POST',
         url: `https://odrabiamy.pl/api/v2/exercises/${exerciseID}/visited`,
         headers: {
-            'user-agent': 'new_user_agent-android-3.3.6',
+            'user-agent': 'new_user_agent-android-3.3.7',
             Authorization: `bearer ${authorization}`,
         }
     })
@@ -196,7 +196,7 @@ async function helpCommand(message: Message) {
     // send message to channel
     await message.channel.send(`
 wyslij linka z zadaniem z odrabiamy, a bot ci wyśle odpowiedz
-!str <link> - wysyła całą stronę
+!str lub !s <link> - wysyła całą stronę
 !split <link> - wysyła całą stronę podzieloną na podpunkty
 !odrabiamyhelp - wysyła tą wiadomość
 !loggingchannel - wysyła kanał na którym bot będzie wysyłał logi
