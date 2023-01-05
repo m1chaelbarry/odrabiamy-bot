@@ -17,6 +17,8 @@ export default function getExerciseImage(solution: string, excercise_number: str
         await page.setContent(decoded_solution, {waitUntil: 'networkidle0'});
         await loaded2;
         await loaded
+        // Wait for all <svg> elements to finish loading
+        await page.waitForSelector('svg');
         const bodyHeight = await page.evaluate(() => document.body.scrollHeight);
         const bodyWidth = await page.evaluate(() => document.body.scrollWidth);
         await page.setViewport({width: bodyWidth, height: bodyHeight});
@@ -33,5 +35,3 @@ export default function getExerciseImage(solution: string, excercise_number: str
 
     });
 }
-
-
