@@ -9,7 +9,9 @@ const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAG
 
 // path to logChannel.json one dir higher using __dirname 
 const logChannelPath = `${__dirname}/../logChannel.json`
+const uid = generateUid()
 
+let cookies: string
 
 export function ready(): void {
     console.log(`Logged in as ${client.user.tag} at ${getCurrentTime()}`)
@@ -20,6 +22,9 @@ export function ready(): void {
         const channelobj = client.channels.cache.get(channel) as TextChannel
         channelobj.send(`Bot turning on. Logged in as ${client.user.tag} at ${getCurrentTime()}`)
     }
+    getCookies().then((result) => {
+        cookies = result;
+    });
 }
 
 client.once('ready', ready);
@@ -36,6 +41,8 @@ client.on("messageCreate", async (message: Message) => {
 
 // main odrabiamy stuff
 async function odrabiamyCommand(message: Message) {
+    console.log(cookies);
+    
     // check if message is in correct form, if not send message
     // odrabiamy.pl/(string)/ksiazka-(number)/strona-(number)
     const regex = /odrabiamy.pl\/(.*)\/ksiazka-(.*)\/strona-(.*)/
@@ -76,34 +83,6 @@ async function odrabiamyCommand(message: Message) {
             })
         }
 
-    } else if (message.content.includes('!split')) {
-
-        const response = await getResponse(exerciseDetails);
-        
-        let solution = exerciseDetails.exerciseID
-        ? response.data.data.filter((sol: apiSolution) => sol.id.toString() === exerciseDetails.exerciseID)[0].solution
-        : response.data.data[0].solution;
-        solution = encodeURI(solution);
-        solution = decodeURI(solution)
-        
-        const excercise_number = exerciseDetails.exerciseID 
-        ? response.data.data.filter((sol: apiSolution) => sol.id.toString() === exerciseDetails.exerciseID)[0].number
-        : response.data.data[0].number;
-        
-        const page_number = exerciseDetails.page
-        
-        const subsection = solution.split('<hr>')
-        
-        for (const element of subsection){
-            const solutionScreenshot = await renderScreenshot(element, excercise_number, page_number, book_name)
-            await markAsVisited(exerciseDetails.exerciseID ? exerciseDetails.exerciseID : response.data.data[0].id, config.odrabiamyAuth);
-            if (!solutionScreenshot) return
-            
-            await message.channel.send({
-                files: [solutionScreenshot],
-            })
-        }
-        
     } else {
         
         const response = await getResponse(exerciseDetails);
@@ -132,12 +111,39 @@ async function odrabiamyCommand(message: Message) {
 
 }
 
+function generateUid() {
+    const uid = [...Array(16)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+    return uid;
+}
+
+async function getCookies() {
+    const response = await axios.request({
+        method: 'GET',
+        url: 'https://www.odrabiamy.pl/api/auth/session',
+    });
+    const cookies = response.headers['set-cookie']
+    const filteredCookies = cookies.map(cookie => cookie.split(';')[0]).join(';');
+
+
+    console.log(filteredCookies);
+    return filteredCookies;
+}
+
+
+
+
+
+
+
 async function getResponse(exerciseDetails: ExerciseDetails) {
     return await axios.request({
         method: 'GET',
         url: `https://odrabiamy.pl/api/v2/exercises/page/premium/${exerciseDetails.page}/${exerciseDetails.bookID}`,
         headers: {
-            'user-agent': 'new_user_agent-android-3.3.12',
+            "content-type": "application/json",
+            "user-agent": `new_user_agent-android-3.3.12-pixel 6-${uid}`,
+            "accept-encoding": "gzip",
+            "cookie": cookies,
             Authorization: `bearer ${config.odrabiamyAuth}`
         }
     });
@@ -148,7 +154,10 @@ async function markAsVisited(exerciseID: string, authorization: string) {
         method: 'POST',
         url: `https://odrabiamy.pl/api/v2/exercises/${exerciseID}/visited`,
         headers: {
-            'user-agent': 'new_user_agent-android-3.3.12',
+            "content-type": "application/json",
+            "user-agent": `new_user_agent-android-3.3.12-pixel 6-${uid}`,
+            "accept-encoding": "gzip",
+            "cookie": cookies,
             Authorization: `bearer ${authorization}`,
         }
     })
