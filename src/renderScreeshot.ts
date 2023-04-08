@@ -17,6 +17,7 @@ export default function getExerciseImage(solution: string, excercise_number: str
         await page.setContent(decoded_solution, {waitUntil: 'networkidle0'});
         await loaded2;
         await loaded
+        await page.waitForSelector('svg', {visible: true});
         const bodyHeight = await page.evaluate(() => document.body.scrollHeight);
         const bodyWidth = await page.evaluate(() => document.body.scrollWidth);
         await page.setViewport({width: bodyWidth, height: bodyHeight});
