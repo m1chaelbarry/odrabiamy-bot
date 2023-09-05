@@ -23,9 +23,9 @@ export function ready(): void {
         const channelobj = client.channels.cache.get(channel) as TextChannel
         channelobj.send(`Bot turning on. Logged in as ${client.user.tag} at ${getCurrentTime()}`)
     }
-    getCookies().then((result) => {
-        cookies = result;
-    });
+    // getCookies().then((result) => {
+    //     cookies = result;
+    // });
 }
 
 client.once('ready', ready);
@@ -142,12 +142,12 @@ async function getCookies() {
 async function getResponse(exerciseDetails: ExerciseDetails) {
     return await axios.request({
         method: 'GET',
-        url: `https://odrabiamy.pl/api/v2/exercises/page/premium/${exerciseDetails.page}/${exerciseDetails.bookID}`,
+        url: `https://odrabiamy.pl/api/v2/exercises/page/premium/${exerciseDetails.page}/${exerciseDetails.bookID}?sld=true`,
         headers: {
             "content-type": "application/json",
-            "user-agent": `new_user_agent-android-3.3.22-pixel 6-${uid}`,
+            "user-agent": `new_user_agent-android-3.3.22-moto g(7) plus-${uid}`,
             "accept-encoding": "gzip",
-            "cookie": cookies,
+            // "cookie": cookies,
             Authorization: `bearer ${config.odrabiamyAuth}`
         }
     });
@@ -159,9 +159,9 @@ async function markAsVisited(exerciseID: string, authorization: string) {
         url: `https://odrabiamy.pl/api/v2/exercises/${exerciseID}/visited`,
         headers: {
             "content-type": "application/json",
-            "user-agent": `new_user_agent-android-3.3.22-pixel 6-${uid}`,
+            "user-agent": `new_user_agent-android-3.3.22-moto g(7) plus-${uid}`,
             "accept-encoding": "gzip",
-            "cookie": cookies,
+            // "cookie": cookies,
             Authorization: `bearer ${authorization}`,
         }
     })
