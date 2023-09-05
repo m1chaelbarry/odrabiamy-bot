@@ -9,6 +9,7 @@ const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAG
 
 // path to logChannel.json one dir higher using __dirname 
 const logChannelPath = `${__dirname}/../logChannel.json`
+
 const uid = generateUid()
 
 let cookies: string
@@ -112,7 +113,16 @@ async function odrabiamyCommand(message: Message) {
 }
 
 function generateUid() {
-    const uid = [...Array(16)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+    const uidPath = `${__dirname}/../uid.json`;
+    let uid: string;
+    
+    if (fs.existsSync(uidPath)) {
+        uid = JSON.parse(fs.readFileSync(uidPath).toString()).uid;
+    } else {
+        uid = [...Array(16)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+        fs.writeFileSync(uidPath, JSON.stringify({ uid }));
+    }
+    
     return uid;
 }
 
@@ -129,19 +139,13 @@ async function getCookies() {
     return filteredCookies;
 }
 
-
-
-
-
-
-
 async function getResponse(exerciseDetails: ExerciseDetails) {
     return await axios.request({
         method: 'GET',
         url: `https://odrabiamy.pl/api/v2/exercises/page/premium/${exerciseDetails.page}/${exerciseDetails.bookID}`,
         headers: {
             "content-type": "application/json",
-            "user-agent": `new_user_agent-android-3.3.12-pixel 6-${uid}`,
+            "user-agent": `new_user_agent-android-3.3.22-pixel 6-${uid}`,
             "accept-encoding": "gzip",
             "cookie": cookies,
             Authorization: `bearer ${config.odrabiamyAuth}`
@@ -155,7 +159,7 @@ async function markAsVisited(exerciseID: string, authorization: string) {
         url: `https://odrabiamy.pl/api/v2/exercises/${exerciseID}/visited`,
         headers: {
             "content-type": "application/json",
-            "user-agent": `new_user_agent-android-3.3.12-pixel 6-${uid}`,
+            "user-agent": `new_user_agent-android-3.3.22-pixel 6-${uid}`,
             "accept-encoding": "gzip",
             "cookie": cookies,
             Authorization: `bearer ${authorization}`,
