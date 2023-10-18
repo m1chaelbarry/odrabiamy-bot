@@ -17,6 +17,7 @@
   "dependencies": {
     "axios": "^0.26.0",
     "discord.js": "^13.6.0",
+    "node-html-to-image": "^4.0.0",
     "puppeteer": "^13.3.2"
   }
 }
