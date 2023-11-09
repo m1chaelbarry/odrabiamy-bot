@@ -37,6 +37,7 @@ client.on("messageCreate", async (message: Message) => {
     if (message.content.includes('odrabiamy.pl')) { await odrabiamyCommand(message) }
     if (message.content.startsWith('#!')) { await copycat(message) }
     if (message.content.startsWith('!odrabiamyhelp')) { await helpCommand(message); }
+    if (message.content.startsWith('!version')) { await setVersion(message); }
 
 })
 
@@ -141,13 +142,38 @@ async function getCookies() {
     return filteredCookies;
 }
 
+async function setVersion(message: Message) {
+    // get version which is written aftert !version
+    const version = message.content.split('!version')[1].trim()
+    if (!version) {
+        await message.channel.send('Please provide a valid version number.')
+        return
+    }
+    // write version to file
+    fs.writeFileSync(`${__dirname}/../version.json`, JSON.stringify({version}))
+    // send message to channel
+    await message.channel.send(`Version set to ${version}`)
+}
+
+async function getVersion() {
+    let version;
+    try {
+        // read version from file
+        version = JSON.parse(fs.readFileSync(`${__dirname}/../version.json`).toString()).version;
+    } catch (error) {
+        console.error(error);
+        version = '3.3.24'; // default version
+    }
+    return version;
+}
+
 async function getResponse(exerciseDetails: ExerciseDetails) {
     return await axios.request({
         method: 'GET',
         url: `https://odrabiamy.pl/api/v2/exercises/page/premium/${exerciseDetails.page}/${exerciseDetails.bookID}?sld=true`,
         headers: {
             "content-type": "application/json",
-            "user-agent": `new_user_agent-android-3.3.24-moto g(7) plus-${uid}`,
+            "user-agent": `new_user_agent-android-${getVersion()}-moto g(7) plus-${uid}`,
             "accept-encoding": "gzip",
             // "cookie": cookies,
             Authorization: `bearer ${config.odrabiamyAuth}`
@@ -161,7 +187,7 @@ async function markAsVisited(exerciseID: string, authorization: string) {
         url: `https://odrabiamy.pl/api/v2/exercises/${exerciseID}/visited`,
         headers: {
             "content-type": "application/json",
-            "user-agent": `new_user_agent-android-3.3.24-moto g(7) plus-${uid}`,
+            "user-agent": `new_user_agent-android-${getVersion()}-moto g(7) plus-${uid}`,
             "accept-encoding": "gzip",
             // "cookie": cookies,
             Authorization: `bearer ${authorization}`,
