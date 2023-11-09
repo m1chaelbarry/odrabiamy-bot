@@ -61,10 +61,15 @@ async function odrabiamyCommand(message: Message) {
     }
 
     await message.channel.send('https://emoji.gg/assets/emoji/loading.gif')
-    const emoji = message.channel.lastMessage
+
     const response = await getResponse(exerciseDetails);
+
+    const emoji = message.channel.lastMessage
+
     const book_name = response.data.data[0].book.name
+
     const author = message.author.tag
+
     console.log(`${author} requested ${message.content} at ${getCurrentTime()}`)
 
     if (message.content.includes('!str') || message.content.includes('!s')) {
@@ -84,10 +89,7 @@ async function odrabiamyCommand(message: Message) {
             })
         }
 
-    } else {
-        
-        const response = await getResponse(exerciseDetails);
-        
+    } else {    
         let solution = exerciseDetails.exerciseID
         ? response.data.data.filter((sol: apiSolution) => sol.id.toString() === exerciseDetails.exerciseID)[0].solution
         : response.data.data[0].solution;
